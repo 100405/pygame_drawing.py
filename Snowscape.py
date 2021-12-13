@@ -40,7 +40,7 @@ def main() -> None:
     num_snow = 100
     snow = []
     for i in range(num_snow):
-        snow.append(snow())
+        snow.append(Snow())
 
     while not done:
         for event in pygame.event.get():
@@ -49,7 +49,7 @@ def main() -> None:
         # snow.update()
 
         screen.fill(BLUE)
-        pygame.draw.circle(screen, snow.colour (snow.x, snow.y), snow.size)
+        pygame.draw.circle(screen, Snow.colour, (snow.x, snow.y), snow.size)
 
         pygame.display.flip()
 
