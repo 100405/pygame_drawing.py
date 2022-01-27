@@ -134,15 +134,7 @@ def main() -> None:
     # Create groups to hold Sprites
     all_sprites = pygame.sprite.Group()
     enemy_sprites = pygame.sprite.Group()
-
-    # Create enemy sprites
-    for i in range(num_enemies):
-        # Create an enemy
-        enemy = Enemy()
-
-        # Add it to the sprites list (enemy_sprites and all_sprites)
-        enemy_sprites.add(enemy)
-        all_sprites.add(enemy)
+    bullet_sprites = pygame.sprite.Group()
 
     # Create the Player block
     player = Player()
@@ -158,6 +150,13 @@ def main() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if len(bullet_sprites) < 3 and time.time() - time_start > time_invincible:
+                    bullet = Bullet(player.rect.midtop)
+
+                    bullet_sprites.add(bullet)
+                    all_sprites.add(bullet)
+
 
         # TODO: LOSE CONDITION - Player's hp goes below 0
         if player.hp_remaining() <= 0:
@@ -168,6 +167,19 @@ def main() -> None:
         mouse_pos = pygame.mouse.get_pos()
         player.rect.x = mouse_pos[0] - player.rect.width / 2
         player.rect.y = mouse_pos[1] - player.rect.height / 2
+
+        # Check numbers of enemies currently on the screen
+        if len(enemy_sprites) < 1:
+            # Create enemy sprites
+            for i in range(num_enemies):
+                # Create an enemy
+                enemy = Enemy()
+
+                # Add it to the sprites list (enemy_sprites and all_sprites)
+                enemy_sprites.add(enemy)
+                all_sprites.add(enemy)
+
+            num_enemies += 5        # scale the degree of difficulty
 
         # Update the location of all sprites
         all_sprites.update()
@@ -180,16 +192,22 @@ def main() -> None:
             for enemy in enemies_collided:
                 player.hp -= 1
 
-        # Check bullet collsions
-
-        # Kill the bullets when they leave the screen
+        # Check bullet collisions with enemies
+        # Kill the bullets when they've left the screen
         for bullet in bullet_sprites:
-            enemies_bullet_collided = pygame.sprite.spritecollide(bullet, enemy_sprites, True)
-                if bullet.rect.y < 0:
-                    bullet.kill()
-        if len(enemies_bullet_collided) > 0:
-            bullet.kill()
-            score += 1
+            enemies_bullet_collided = pygame.sprite.spritecollide(
+                bullet,
+                enemy_sprites,
+                True
+            )
+
+            # If the bullet has struck some enemy
+            if len(enemies_bullet_collided) > 0:
+                bullet.kill()
+                score += 1
+
+            if bullet.rect.y < 0:
+                bullet.kill()
 
         # ----------- DRAW THE ENVIRONMENT
         screen.fill(BGCOLOUR)      # fill with bgcolor
@@ -222,6 +240,18 @@ def main() -> None:
 
         # ----------- CLOCK TICK
         clock.tick(75)
+
+    # Clean-up
+
+    # Update the high score if the current score is the highest
+    with open("./pygame_drawing.py/WATER.py") as f:
+        high_score = int(f.readline().strip())
+
+    with open("./pygame_drawing.py/WATER.py", "w") as f:
+        if score > high_score:
+            f.write(str(score))
+        else:
+            f.write(str(high_score))
 
 
 if __name__ == "__main__":

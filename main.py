@@ -30,7 +30,7 @@ class Dvdimage:
         self.x, self.y = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         self.width = 180
         self.height = 180
-        self.img = pygame.image.load("./images1/download.png")
+        self.img = pygame.image.load("images1/enemy.png")
         self.x_vel = 5
         self.y_vel = 5
 
@@ -78,7 +78,7 @@ def main() -> None:
         # Logic (Change the environment)
         dvd_image.update()
 
-        # print(f"x: {download.png.x}36+ ")
+        # print(f"x: {enemy.png.x}36+ ")
 
         # Draw the environment
         screen.fill(WHITE)  # fill with bgcolor
